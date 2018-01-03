@@ -151,6 +151,47 @@ Run your app again to view the new message:
 minikube service hello-node
 ```
 
+### Scaling Your deployments (e.g. Scaling hello-node in this example)
+
+#### 1. list current deployments
+```shell
+kubectl get deployments
+```
+
+##### example result:
+```shell
+NAME         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+hello-node   1         1         1            1           1h
+```
+
+#### 2. Scaling up/down to 4 pods
+```shell
+kubectl scale deployments/hello-node --replicas=4
+```
+
+```shell
+kubectl get deployments
+```
+##### example result:
+```shell
+NAME         DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+hello-node   4         4         4            1           1h
+```
+
+```shell
+kubectl get pods -o wide
+```
+##### example result:
+```shell
+NAME                          READY     STATUS    RESTARTS   AGE       IP           NODE
+hello-node-75ddf8bc9d-2xnlh   1/1       Running   0          1m        172.17.0.7   minikube
+hello-node-75ddf8bc9d-9xhgj   1/1       Running   0          1h        172.17.0.5   minikube
+hello-node-75ddf8bc9d-gh7xx   1/1       Running   0          1m        172.17.0.6   minikube
+hello-node-75ddf8bc9d-vxs4k   1/1       Running   0          1m        172.17.0.4   minikube
+```
+(Now their are 4 running pods)
+
+
 ### Delete the deployment and service
 ```shell
 kubectl delete deployment hello-node
