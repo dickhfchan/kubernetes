@@ -151,6 +151,9 @@ Run your app again to view the new message:
 minikube service hello-node
 ```
 
+### Ref
+* https://kubernetes.io/docs/tutorials/stateless-application/hello-minikube/#create-your-nodejs-application
+
 ### Scaling Your deployments (e.g. Scaling hello-node in this example)
 
 #### 1. list current deployments
@@ -191,6 +194,8 @@ hello-node-75ddf8bc9d-vxs4k   1/1       Running   0          1m        172.17.0.
 ```
 (Now their are 4 running pods)
 
+### Ref
+* https://kubernetes.io/docs/tutorials/kubernetes-basics/scale-intro/
 
 ### Delete the deployment and service
 ```shell
