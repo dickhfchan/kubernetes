@@ -30,9 +30,8 @@ minikube start --vm-driver=virtualbox
 
 5. After a few minutesthe minikube instance will be ready. then use kubectl to verify that everything is working:
 ```shell
->kubectl cluster-info
+kubectl cluster-info
 ```
-
 result should be:
 Kubernetes master is running at https://192.168.99.100:8443
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
@@ -76,7 +75,7 @@ EXPOSE 8080
 COPY server.js .
 CMD node server.js
 ```
-(NOTE: You can run 'node -v' to check your node version in terminal)
+  (**NOTE**: You can run 'node -v' to check your node version in terminal)
 
 3. Make sure you are using the Minikube Docker daemon, run:
 ```shell
