@@ -1,4 +1,11 @@
 # kubernetes
+### HOWTO:
+#### 1. [Install minikube in macOS/Ubuntu](#Install_minikube_in_macOSUbuntu_dont_install_ubuntu_in_Virtualbox_9)
+#### 2. [Create a Node.js example app deployment and service](#Example_To_create_a_Nodejs_application_62)
+#### 3. [Update the example application](#Update_the_example_app_140)
+#### 4. [Scaling example application](#Scaling_Your_deployments_eg_Scaling_hellonode_in_this_example_164)
+#### 5. [Delete the deployment and service](#Delete_the_deployment_and_service_207)
+#### 6. [Using YAML file to manage application](#Using_YAML_file_to_manage_application_214)
 
 ## Install minikube in macOS/Ubuntu (don’t install ubuntu in Virtualbox):
 #### 1. Install [Virtualbox](https://www.virtualbox.org/)
@@ -109,8 +116,9 @@ kubectl get pods
 
 #### 6. Expose the Pod using the kubectl expose command:
 ```shell
-kubectl expose deployment hello-node --type=LoadBalancer
+kubectl expose deployment hello-node --type=NodePort
 ```
+Change '--type=NodePort' to '--type=LoadBalancer' if LoadBalancer is setting up
 
 View the Service you just created:
 ```shell
@@ -203,4 +211,75 @@ kubectl delete deployment hello-node
 ```
 ```shell
 kubectl delete service hello-node
+```
+### Using YAML file to manage application
+#### 1. Create and go into working directory
+```shell
+mkdir /demo/application1
+cd /demo/application1
+```
+
+#### 2. Create example.app1.deployment.yaml file
+```
+vim example.app1.deployment.yaml file
+```
+insert the code:
+```
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hello-node
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello-node
+        tier: hello-app
+        trcak: stable
+    spec:
+      containers:
+      - name: hello-node
+        image: "hello-node:v1"
+        ports:
+          - containerPort: 8085
+```
+#### 3. Create example.app1.service.yaml file
+```
+vim example.app1.service.yaml file
+```
+insert the code:
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-node
+spec:
+  selector:
+    app: hello-node
+    tier: hello-app
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 8085
+  type: NodePort
+```
+#### 4. Create deployment and service
+deployment:
+```
+kubectl create -f example.app1.deployment.yaml
+```
+service:
+```
+kubectl create -f example.app1.service.yaml
+```
+
+Or all yaml file in current directory
+```
+kubectl create -f .
+```
+To view the running deployment and service:
+```
+kubectl get deployments
+kubectl get service
 ```
