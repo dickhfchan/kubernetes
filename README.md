@@ -242,7 +242,7 @@ spec:
       - name: hello-node
         image: "hello-node:v1"
         ports:
-          - containerPort: 8085
+          - containerPort: 8080
 ```
 #### 3. Create example.app1.service.yaml file
 ```
@@ -261,7 +261,7 @@ spec:
   ports:
   - protocol: "TCP"
     port: 80
-    targetPort: 8085
+    targetPort: 8080
   type: NodePort
 ```
 #### 4. Create deployment and service

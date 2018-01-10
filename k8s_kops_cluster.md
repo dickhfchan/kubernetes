@@ -35,6 +35,12 @@ you will also need the kubectl cli tool in order to use kubernetes you can get s
 
 `brew install kubectl`
 
+OR Linux:
+
+```
+curl -Lo kubectl http://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+```
+
 MANAGING THE CLUSTER
 --------------------
 
@@ -64,7 +70,7 @@ to get your config from the state run
 
 `kops export kubecfg answ.k8s.local`
 
-to edit your global cluster config run 
+to edit your global cluster config run
 
 `kops edit cluster answ.k8s.local`
 
@@ -99,7 +105,7 @@ KOPS deploy every server using instance groups, this means you can have diferent
 
 you can get the list of current deployed IG's by doing
 
-`kops get ig --name=answ.k8s.local` 
+`kops get ig --name=answ.k8s.local`
 
 ```
 $ kops get ig --name=answ.k8s.local
@@ -110,7 +116,7 @@ master-ap-southeast-1b-1	Master	m3.medium	1	1	ap-southeast-1b
 nodes				Node	t2.micro	2	2	ap-southeast-1a,ap-southeast-1b
 ```
 
-and edit them by 
+and edit them by
 
 `kops edit ig --name=answ.k8s.local master-ap-southeast-1a-1`
 
