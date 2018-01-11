@@ -41,88 +41,6 @@ OR Linux:
 curl -Lo kubectl http://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
 ```
 
-MANAGING THE CLUSTER
---------------------
-
-the follow configuration is being used
-
-```
-export AWS_ACCESS_KEY_ID=<changeme>
-export AWS_SECRET_ACCESS_KEY=<changeme>
-export NAME=answ.k8s.local
-export KOPS_STATE_STORE=s3://answ-k8s-cluster-state
-export ZONES=ap-southeast-1a,ap-southeast-1b
-```
-
-once the env vars are set using a correct AWS secret and key, you can start managing your clusters, if you want to list the number of clusters on your state you can simple use.
-
-To create a cluster, please Follow [CREATE OR DESTROY](#create-or-destroy) to create the cluster.
-
-`kops get cluster`
-
-```
-$ kops get cluster
-NAME		CLOUD	ZONES
-answ.k8s.local	aws	ap-southeast-1a,ap-southeast-1b
-```
-
-you need to get the kubectl config in order to use some of the kops commands (kubectl is used to manage kubernetes but used to validate some kops commands against the cluster)
-
-to get your config from the state run
-
-`kops export kubecfg answ.k8s.local`
-
-to edit your global cluster config run
-
-`kops edit cluster answ.k8s.local`
-
-that command will open your default editor with a kubernetes like resource defining your cluster config (basic kubernetes api settings, etcd instances etc.) documentation on cluster config can be found [here](https://github.com/kubernetes/kops/blob/master/docs/cluster_spec.md)
-
-EDITING CLUSTER RESOURCES
--------------------------
-
-in order to edit or create new node pools you can use kops edit capabilities
-
-`kops edit ig --name=answ.k8s.local nodes`
-
-there you can control the labels of the nodes being created, the zones they will be created on and instance type
-
-after you edited any resource you need to apply the changes to the cluster.
-
-`kops update cluster answ.k8s.local`
-
-that will be a dry run (no changes apply) so you can verify what will actually happen, after your confident in your changes you can apply them with
-
-`kops update cluster answ.k8s.local --yes`
-
-some changes will require instances to be restarted or recreated and that can be done via
-
-`kops rolling-update cluster --yes`
-
-as with update you can remove the `--yes` to do a dry run first.
-
-
-
-KOPS deploy every server using instance groups, this means you can have diferent pools of servers with diferent server types depending on your needs.
-
-you can get the list of current deployed IG's by doing
-
-`kops get ig --name=answ.k8s.local`
-
-```
-$ kops get ig --name=answ.k8s.local
-NAME				ROLE	MACHINETYPE	MIN	MAX	ZONES
-master-ap-southeast-1a-1	Master	m3.medium	1	1	ap-southeast-1a
-master-ap-southeast-1a-2	Master	m3.medium	1	1	ap-southeast-1a
-master-ap-southeast-1b-1	Master	m3.medium	1	1	ap-southeast-1b
-nodes				Node	t2.micro	2	2	ap-southeast-1a,ap-southeast-1b
-```
-
-and edit them by
-
-`kops edit ig --name=answ.k8s.local master-ap-southeast-1a-1`
-
-
 CREATE OR DESTROY
 -----------------
 
@@ -222,6 +140,88 @@ To destroy the current cluster (delete all resources managed by kops) you can si
 `kops delete cluster ${NAME} --yes`
 
 remember that remove `--yes` will do dry runs.
+
+
+MANAGING THE CLUSTER
+--------------------
+
+the follow configuration is being used
+
+```
+export AWS_ACCESS_KEY_ID=<changeme>
+export AWS_SECRET_ACCESS_KEY=<changeme>
+export NAME=answ.k8s.local
+export KOPS_STATE_STORE=s3://answ-k8s-cluster-state
+export ZONES=ap-southeast-1a,ap-southeast-1b
+```
+
+once the env vars are set using a correct AWS secret and key, you can start managing your clusters, if you want to list the number of clusters on your state you can simple use.
+
+To create a cluster, please Follow [CREATE OR DESTROY](#create-or-destroy) to create the cluster.
+
+`kops get cluster`
+
+```
+$ kops get cluster
+NAME		CLOUD	ZONES
+answ.k8s.local	aws	ap-southeast-1a,ap-southeast-1b
+```
+
+you need to get the kubectl config in order to use some of the kops commands (kubectl is used to manage kubernetes but used to validate some kops commands against the cluster)
+
+to get your config from the state run
+
+`kops export kubecfg answ.k8s.local`
+
+to edit your global cluster config run
+
+`kops edit cluster answ.k8s.local`
+
+that command will open your default editor with a kubernetes like resource defining your cluster config (basic kubernetes api settings, etcd instances etc.) documentation on cluster config can be found [here](https://github.com/kubernetes/kops/blob/master/docs/cluster_spec.md)
+
+EDITING CLUSTER RESOURCES
+-------------------------
+
+in order to edit or create new node pools you can use kops edit capabilities
+
+`kops edit ig --name=answ.k8s.local nodes`
+
+there you can control the labels of the nodes being created, the zones they will be created on and instance type
+
+after you edited any resource you need to apply the changes to the cluster.
+
+`kops update cluster answ.k8s.local`
+
+that will be a dry run (no changes apply) so you can verify what will actually happen, after your confident in your changes you can apply them with
+
+`kops update cluster answ.k8s.local --yes`
+
+some changes will require instances to be restarted or recreated and that can be done via
+
+`kops rolling-update cluster --yes`
+
+as with update you can remove the `--yes` to do a dry run first.
+
+
+
+KOPS deploy every server using instance groups, this means you can have diferent pools of servers with diferent server types depending on your needs.
+
+you can get the list of current deployed IG's by doing
+
+`kops get ig --name=answ.k8s.local`
+
+```
+$ kops get ig --name=answ.k8s.local
+NAME				ROLE	MACHINETYPE	MIN	MAX	ZONES
+master-ap-southeast-1a-1	Master	m3.medium	1	1	ap-southeast-1a
+master-ap-southeast-1a-2	Master	m3.medium	1	1	ap-southeast-1a
+master-ap-southeast-1b-1	Master	m3.medium	1	1	ap-southeast-1b
+nodes				Node	t2.micro	2	2	ap-southeast-1a,ap-southeast-1b
+```
+
+and edit them by
+
+`kops edit ig --name=answ.k8s.local master-ap-southeast-1a-1`
 
 
 KUBERNETES
