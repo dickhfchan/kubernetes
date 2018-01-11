@@ -134,9 +134,10 @@ AmazonS3FullAccess
 IAMFullAccess
 AmazonVPCFullAccess
 
-you can create this user by using the aws cli
+you can create this user by using the aws cli (**Optional:** You can login to amazon console to create IAM and s3 bucket manually)
 
 First install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/awscli-install-linux.html), then run the configuration:
+
 ```
 $ aws configure
 AWS Access Key ID [None]: <input your key>
@@ -145,10 +146,9 @@ Default region name [None]:
 Default output format [None]:
 ```
 
-
+Create group and user:
 ```
 aws iam create-group --group-name kops
-
 aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonEC2FullAccess --group-name kops
 aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonRoute53FullAccess --group-name kops
 aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess --group-name kops
@@ -156,14 +156,29 @@ aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/IAMFullAccess -
 aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonVPCFullAccess --group-name kops
 
 aws iam create-user --user-name kops
-
 aws iam add-user-to-group --user-name kops --group-name kops
+```
 
+#### `Create Access Key`
+```
 aws iam create-access-key --user-name kops
+```
+#### `Output`
+**`Please save the SecretAccessKey and AccessKeyId`**
+```
+{
+    "AccessKey": {
+        "UserName": "kops",
+        "Status": "Active",
+        "CreateDate": "2018-01-11T11:11:11.111Z",
+        "SecretAccessKey": "<SecretAccessKey String>",
+        "AccessKeyId": "<AccessKeyId String>"
+    }
+}
 ```
 
 
-an s3 bucket is also necesary to store cluster state
+Create an s3 bucket is also necesary to store cluster state
 
 ```
 aws s3api create-bucket --bucket answ-k8s-cluster-state --region us-east-1
@@ -172,14 +187,17 @@ aws s3api put-bucket-versioning --bucket answ-k8s-cluster-state  --versioning-co
 
 `note that both of the above operation will error out if the resources already exist`
 
-to destroy the current cluster (delete all resources managed by kops) you can simply do
+#### Create cluster
 
-`kops delete cluster ${NAME} --yes`
-
-remember that remove `--yes` will do dry runs.
-
-and to recreate the cluster simply use the base config
-
+Configuration: [use the key created for the created user](#output)
+```
+export AWS_ACCESS_KEY_ID=<AccessKeyId String>
+export AWS_SECRET_ACCESS_KEY=<SecretAccessKey String>
+export NAME=answ.k8s.local
+export KOPS_STATE_STORE=s3://answ-k8s-cluster-state
+export ZONES=ap-southeast-1a,ap-southeast-1b
+```
+Create cluster:
 ```
 kops create cluster \
     --zones $ZONES \
@@ -188,7 +206,7 @@ kops create cluster \
     --master-volume-size 100 \
     --networking weave \
     --node-count 2 \
-    --node-size t1.micro \
+    --node-size t2.micro \
     --node-volume-size 250 \
     ${NAME}
 ```
@@ -196,6 +214,14 @@ kops create cluster \
 you can validate your cluster with
 
 `kops validate cluster --name answ.k8s.local`
+
+
+#### Destroy Cluster
+To destroy the current cluster (delete all resources managed by kops) you can simply do
+
+`kops delete cluster ${NAME} --yes`
+
+remember that remove `--yes` will do dry runs.
 
 
 KUBERNETES
