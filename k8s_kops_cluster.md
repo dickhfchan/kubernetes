@@ -56,6 +56,8 @@ export ZONES=ap-southeast-1a,ap-southeast-1b
 
 once the env vars are set using a correct AWS secret and key, you can start managing your clusters, if you want to list the number of clusters on your state you can simple use.
 
+To create a cluster, please Follow [CREATE OR DESTROY](#create-or-destroy) to create the cluster.
+
 `kops get cluster`
 
 ```
@@ -133,6 +135,16 @@ IAMFullAccess
 AmazonVPCFullAccess
 
 you can create this user by using the aws cli
+
+First install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/awscli-install-linux.html), then run the configuration:
+```
+$ aws configure
+AWS Access Key ID [None]: <input your key>
+AWS Secret Access Key [None]: <input your key>
+Default region name [None]:
+Default output format [None]:
+```
+
 
 ```
 aws iam create-group --group-name kops

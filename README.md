@@ -6,6 +6,7 @@
 #### 4. [Scaling example application](#scaling-your-deployments-eg-scaling-hello-node-in-this-example)
 #### 5. [Delete the deployment and service](#delete-the-deployment-and-service)
 #### 6. [Using YAML file to manage application](#using-yaml-file-to-manage-application)
+#### 7. [Mount persistent volume to the application](#mount-persistent-volume-to-the-application)
 
 ## Install minikube in macOS/Ubuntu (don’t install ubuntu in Virtualbox):
 #### 1. Install [Virtualbox](https://www.virtualbox.org/)
@@ -80,6 +81,11 @@ Create a file, also in the hellonode folder, named 'Dockerfile':
 ```
 FROM node:6.9.2
 EXPOSE 8080
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
 COPY server.js .
 CMD node server.js
 ```
@@ -283,3 +289,72 @@ To view the running deployment and service:
 kubectl get deployments
 kubectl get service
 ```
+
+## Mount persistent volume to the application
+#### 1. create PersistentVolume in example.app1.PersistentVolume.yaml file
+```
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: task-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/demo/html/hello-node"
+```
+#### 2. create PersistentVolumeClaim in example.app1.PersistentVolumeClaim.yaml file
+```
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: task-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+#### 3. Mount PersistentVolume to the application
+edit example.app1.deployment.yaml file
+```
+vim example.app1.deployment.yaml file
+```
+Update it to:
+```
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hello-node
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello-node
+        tier: hello-app
+        trcak: stable
+    spec:
+      containers:
+      - name: hello-node
+        image: "hello-node:v2"
+        ports:
+          - containerPort: 8085
+        volumeMounts:
+          - name: simple-storage
+            mountPath: /usr/src/app
+      volumes:
+      - name: simple-storage
+        persistentVolumeClaim:
+          claimName: task-pv-claim
+```
+
+### Ref
+* https://kubernetes.io/docs/tasks/configure-pod-container/configure-persistent-volume-storage/
