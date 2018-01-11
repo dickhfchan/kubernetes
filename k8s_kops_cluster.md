@@ -280,3 +280,12 @@ weave-net-7bxst                                                            2/2  
 weave-net-rdkrq                                                            2/2       Running   0          1h
 weave-net-x6cfx                                                            2/2       Running   0          51m
 ```
+
+
+#### Install Dashboard and Monitor
+```
+kubectl create -f https://raw.githubusercontent.com/kubernetes/kops/master/addons/kubernetes-dashboard/v1.7.1.yaml
+kubectl create -f https://raw.githubusercontent.com/kubernetes/kops/master/addons/monitoring-standalone/v1.7.0.yaml
+
+kubectl proxy
+```
