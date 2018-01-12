@@ -33,13 +33,17 @@ sudo mv ./kops /usr/local/bin/
 
 you will also need the kubectl cli tool in order to use kubernetes you can get similary to kops
 
-`brew install kubectl`
+```
+brew install kubectl
+```
 
 OR Linux:
 
 ```
 curl -Lo kubectl http://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
 ```
+
+
 
 CREATE OR DESTROY
 -----------------
@@ -131,13 +135,29 @@ kops create cluster \
 
 you can validate your cluster with
 
-`kops validate cluster --name answ.k8s.local`
+```
+kops validate cluster --name answ.k8s.local
+```
 
+#### Switch context to different cluster
+
+to list all cotexts:
+
+```
+kubectl config get-contexts
+```
+
+set context
+```
+kubectl config use-context CONTEXT_NAME
+```
 
 #### Destroy Cluster
 To destroy the current cluster (delete all resources managed by kops) you can simply do
 
-`kops delete cluster ${NAME} --yes`
+```
+kops delete cluster ${NAME} --yes
+````
 
 remember that remove `--yes` will do dry runs.
 
